@@ -1,0 +1,29 @@
+<view class="container">
+    <view class="sku-preview">
+        <image class="sku-img"></image>
+        <view class="sku-description">
+            <text class="title">sku测试数据</text>
+            <view class="price-row">
+                    <l-price color="#157658"
+                             value-size="28"
+                             unit-size="20"
+                             autofix value="777"></l-price>
+                    <l-price color="#999999"
+                             value-size="26"
+                             l-class = "discount-price"
+                             deleted value="999"></l-price>
+            </view>
+            <!--选择尺寸-->
+            <view class="sku-pending">
+                <text>请选择</text>
+            </view>
+        </view>
+
+    </view>
+     <block wx:for="{{fences}}" wx:key="{{index}}">
+             <!-- 自定义组件 在realm 里面直接给x 传给fences x代表fencegroup.fences[] cell抛出来celltap -->
+             <s-fence x="{{index}}"  bind:celltap="onCellTap" fence="{{item}}"></s-fence>
+     </block>
+    <!-- 购买商品的计数器 -->
+    <view class="counter-container"></view>
+</view>

@@ -1,0 +1,12 @@
+<view class="container">
+     <!-- 规格名称 -->
+     <view class="title">{{fence.title}}</view>
+     <!--  一个规格名下面有多个cell -->
+     <view class="row-container">
+         <block wx:for="{{fence.cells}}" wx:key="{{index}}">
+             <!-- 在fence里面还是确定不了x 通过realm传递X到fence,在从fence把x传递给cell-->
+            <s-cell class="cell" x="{{x}}"  y="{{index}}"  cell="{{item}}"></s-cell>
+         </block>
+         <view class="hr"></view>
+     </view>
+</view>

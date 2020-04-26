@@ -1,0 +1,38 @@
+/**
+ * @Description:
+ * @author Howard zheng
+ * @date
+*/
+
+ function mainPrice(price,discount_price){
+     //没有打折价格的情况
+    //主价格就是price
+    if(!discount_price){
+        return {
+            price:price,
+            display:true
+        }
+    }else{
+        return{
+            price:discount_price,
+            display:null
+        }
+    }
+}
+function slashedPrice(price,discount_price) {
+        if(discount_price){
+            return{
+                price:price,
+                display:true
+            }
+        }else{
+            return{
+                price:price
+                display:false
+            }
+        }
+}
+module.exports = {
+    mainPrice:mainPrice,
+    slashedPrice:slashedPrice
+}
