@@ -3,12 +3,20 @@
  * @author Howard zheng
  * @date 2020-04-01
 */
+import {Cell} from "./Cell";
+
 class SkuPending {
     //记录用户选中的cell
     pending = []
 
     constructor() {
 
+    }
+    init(sku){
+      for(let i=0;i<sku.specs.length;i++){
+          const cell = new Cell(sku.specs[i])
+          this.insertCell(cell,i)
+      }
     }
     //向skupending里面
 //插入cell 这里在插入的时候是要考虑顺序的

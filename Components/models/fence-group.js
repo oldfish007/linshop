@@ -15,6 +15,7 @@ class FenceGroup{
         this.spu = spu
         this.skuList = spu.sku_list
     }
+    //获取CMS定义的默认SKU显示
     getDefaultSku(){
         const defaultSkuId = this.spu.default_sku_id
         if(!defaultSkuId){
@@ -45,8 +46,10 @@ class FenceGroup{
     initFence(){
         const matrix = this._createMatrix(this.skuList)
         const fences = []
+        //
         const AT = matrix.transpose()
 /*
+矩阵行列转置后的结果
 console.log(AT)
 [
   [
@@ -68,6 +71,7 @@ console.log(AT)
     {key_id: 4, key: "尺码", value_id: 14, value: "小号 S"}
   ]
 ]
+(3) 
  */
 //完成转置后的数组，遍历实例化fence
         AT.forEach(r=>{
@@ -77,6 +81,18 @@ console.log(AT)
         })
         this.fences=fences
 console.log(fences)
+    }
+
+    setCellStatusByXY(x,y,status){
+        this.fences[x].cells[y].status = status
+    }
+
+    setCellStatusById(cellId,status){
+        this._eachCell((cell)=>{
+            if(cell.id===cellId){
+                cell.status=status
+            }
+        })
     }
 
     _eachCell(cb){

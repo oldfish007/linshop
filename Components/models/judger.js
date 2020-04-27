@@ -18,15 +18,23 @@ class Judger{
 
     constructor(fenceGroup) {
         this.fenceGroup = fenceGroup
-        this._initSkuPending()
         this._initPathDict()
+        this._initSkuPending()
     }
 
-    _initSkuPending(){
-
+    _initSkuPending() {
         this.skuPending = new SkuPending()
+        const defaultSku = this.fenceGroup.getDefaultSku()
+        if (!defaultSku) {
+            return
+        }
+        this.skuPending.init(defaultSku)
+        this.skuPending.pending.forEach(cell=>{
+            this.fenceGroup.setCellStatusById(cell.id,CellStatus.SELECTED)
+        })
+        this.judge(null,null,null,true)
+//console.log(this.skuPending)
     }
-
     _initPathDict(){
         //有4个sku 遍历 4个中单独
         this.fenceGroup.spu.sku_list.forEach(s=>{
@@ -61,7 +69,8 @@ class Judger{
              */
 
             this.pathDict =  this.pathDict.concat(skuCode.totalsegments)
-console.log(this.pathDict)
+//console.log(this.pathDict)
+
         })
 //4个sku_list都会放到放入pathDict里面
 /*
@@ -113,32 +122,34 @@ console.log(this.pathDict)
      * @param x
      * @param y
      */
-    judge(cell,x,y){
-//改变状态
-        this._changeCurrentCellStatus(cell,x,y)
+    judge(cell,x,y,isInit = false){
+//改变状态  非默认状态也就是用户点击才选
+        if(!isInit){
+           this._changeCurrentCellStatus(cell,x,y)
+        }
 //传回调函数过去
         this.fenceGroup._eachCell((cell,x,y)=>{
             //传进去一个当前规格对象，计算出所有潜在路径
             const path = this._findPotentiaPath(cell,x,y)
 //丢给前端的潜在路径
-console.log(path)
+//console.log(path)
             if(!path){
                 return
             }
 //把潜在路径放到字典里面去查一下
             const isIn = this._isInDict(path)
-
 //存在就可选，不存在就forbidden
             if(isIn){
-                this.fenceGroup.fences[x].cells[y].status = CellStatus.WAITING
+                //this.fenceGroup.fences[x].cells[y].status = CellStatus.WAITING
+                this.fenceGroup.setCellStatusByXY(x,y,CellStatus.WAITING)
             }else{
-                this.fenceGroup.fences[x].cells[y].status = CellStatus.FORBIDDEN
+//            this.fenceGroup.fences[x].cells[y].status = CellStatus.FORBIDDEN
+               this.fenceGroup.setCellStatusByXY(x,y,CellStatus.FORBIDDEN)
             }
         })
     }
 // 思路的自然延展 可读性更强
     _isInDict(path){
-
         return this.pathDict.includes(path)
     }
 
@@ -177,11 +188,11 @@ console.log(path)
  //3-56
  //首先要找到其他行有没有找到已选元素，如果有已选元素我们肯定要把它加到前台路径里面去
   //如果没有已选元素就什么都不用加，那么就需要一个数据已选元素怎么得到skuPending
-                if(selected){
-                    const selectedCellCode = this._getCellCode(selected.spec)
-                    joiner.join(selectedCellCode)
-                }
+            if(selected){
+                const selectedCellCode = this._getCellCode(selected.spec)
+                joiner.join(selectedCellCode)
             }
+           }
         }
         return joiner.getStr()
     }
@@ -191,17 +202,20 @@ console.log(path)
     }
 //正选是可选变为选中SELECT，反选是选中变为可选 WAITING
     _changeCurrentCellStatus(cell,x,y){
+            console.log(cell,x,y)
         if(cell.status === CellStatus.WAITING){
-           // cell.status = CellStatus.SELECTED
-            this.fenceGroup.fences[x].cells[y].status = CellStatus.SELECTED
-           //此处控制添加 对于某个Cell，不需要考虑当前行其他cell是否已选
+            //cell.status = CellStatus.SELECTED
+            //this.fenceGroup.fences[x].cells[y].status = CellStatus.SELECTED
+            this.fenceGroup.setCellStatusByXY(x,y,CellStatus.SELECTED)
+            //此处控制添加 对于某个Cell，不需要考虑当前行其他cell是否已选
             this.skuPending.insertCell(cell,x)
         }
  //如果已经是已选状态就要恢复成WAITING状态
  //用户点击取消就把已选置位待选状态
         if(cell.status === CellStatus.SELECTED){
-           //cell.status = CellStatus.WAITING
-            this.fenceGroup.fences[x].cells[y].status = CellStatus.WAITING
+            //cell.status = CellStatus.WAITING
+            //this.fenceGroup.fences[x].cells[y].status = CellStatus.WAITING
+            this.fenceGroup.setCellStatusByXY(x,y,CellStatus.WAITING)
             this.skuPending.removeCell(x)
         }
     }

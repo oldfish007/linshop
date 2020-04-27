@@ -1,6 +1,5 @@
-AppKey:
-vWheNGLDTfIueYNj
-judger.judge(cell,x,y)
-class Judger{
-
-}
+默认规格渲染
+1.move修改状态代码到fencegroup,修改judger里面设置状态的代码
+2.增加fencegroup里面根据cellId更改selected
+3.initSpupending遍历之前放在spupending里面pending数组传给
+fencegroup.setCellStatusById(cell.id,CellStatus.SELECTED)
